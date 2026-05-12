@@ -14,10 +14,12 @@ PeekDesktop brings macOS Sonoma's "click wallpaper to reveal desktop" feature to
 
 | File | Platform |
 |------|----------|
-| `PeekDesktop-vX.Y-win-x64.zip` | Intel/AMD (most PCs) |
-| `PeekDesktop-vX.Y-win-arm64.zip` | ARM64 (Surface Pro X, Snapdragon, etc.) |
+| `PeekDesktop-vX.Y.Z-win-x64.zip` | Intel/AMD (most PCs) |
+| `PeekDesktop-vX.Y.Z-win-arm64.zip` | ARM64 (Surface Pro X, Snapdragon, etc.) |
 
 No installer needed. Download the zip, extract it, and run `PeekDesktop.exe`. Release builds are **self-contained**, so you do not need to install .NET separately. It lives in your system tray and **updates itself automatically** — when a new version is available, it downloads, verifies the code signature, and restarts in place.
+
+If Windows shows **"This app can't run on your PC"**, you likely downloaded the wrong architecture (`win-arm64` vs `win-x64`).
 
 ## Documentation
 
@@ -26,7 +28,7 @@ No installer needed. Download the zip, extract it, and run `PeekDesktop.exe`. Re
 
 ## How It Works
 
-1. **Click empty desktop wallpaper or empty taskbar area** (not an icon or taskbar button) -> your desktop is revealed
+1. **Single-click empty desktop wallpaper or empty taskbar area** (not an icon or taskbar button) -> your desktop is revealed
 2. **Stay on the desktop** -> click or drag icons, right-click, and rearrange things while windows stay hidden
 3. **Click any app, the taskbar, or empty wallpaper again** -> all windows restore to exactly where they were
 
