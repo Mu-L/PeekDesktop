@@ -255,6 +255,7 @@ public sealed class WindowTracker
         IntPtr hMonitor = NativeMethods.MonitorFromRect(ref startBounds, NativeMethods.MONITOR_DEFAULTTONEAREST);
         NativeMethods.GetMonitorInfoW(hMonitor, ref monitorInfo);
         NativeMethods.RECT screenBounds = monitorInfo.rcWork;
+        NativeMethods.RECT virtualScreenBounds = GetVirtualScreenBounds();
 
         int width = Math.Max(1, startBounds.Right - startBounds.Left);
         int height = Math.Max(1, startBounds.Bottom - startBounds.Top);
@@ -268,12 +269,12 @@ public sealed class WindowTracker
         bool moveUp = centerY < screenBounds.Top + (screenHeight / 2);
 
         int targetLeft = moveLeft
-            ? screenBounds.Left - width - OffscreenMargin
-            : screenBounds.Right + OffscreenMargin;
+            ? virtualScreenBounds.Left - width - OffscreenMargin
+            : virtualScreenBounds.Right + OffscreenMargin;
 
         int targetTop = moveUp
-            ? screenBounds.Top - height - OffscreenMargin
-            : screenBounds.Bottom + OffscreenMargin;
+            ? virtualScreenBounds.Top - height - OffscreenMargin
+            : virtualScreenBounds.Bottom + OffscreenMargin;
 
         return new NativeMethods.RECT
         {
@@ -281,6 +282,21 @@ public sealed class WindowTracker
             Top = targetTop,
             Right = targetLeft + width,
             Bottom = targetTop + height
+        };
+    }
+
+    private static NativeMethods.RECT GetVirtualScreenBounds()
+    {
+        int left = NativeMethods.GetSystemMetrics(NativeMethods.SM_XVIRTUALSCREEN);
+        int top = NativeMethods.GetSystemMetrics(NativeMethods.SM_YVIRTUALSCREEN);
+        int width = Math.Max(1, NativeMethods.GetSystemMetrics(NativeMethods.SM_CXVIRTUALSCREEN));
+        int height = Math.Max(1, NativeMethods.GetSystemMetrics(NativeMethods.SM_CYVIRTUALSCREEN));
+        return new NativeMethods.RECT
+        {
+            Left = left,
+            Top = top,
+            Right = left + width,
+            Bottom = top + height
         };
     }
 
