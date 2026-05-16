@@ -34,6 +34,7 @@ public sealed class DesktopPeek : IDisposable
     private bool _isTransitioning; // suppresses events during minimize/restore
     private bool _nativeShellToggled;
     private bool _pauseWhileFullscreenAppActive;
+    private bool _peekOnTaskbarClick;
     private bool _restoreHiddenWindowsOnAppOpen;
     private bool _isSuppressedForGaming;
     private long _ignoreFocusUntil;
@@ -50,10 +51,12 @@ public sealed class DesktopPeek : IDisposable
         PeekMode = NormalizePeekMode(settings.PeekMode);
         _mouseHook.RequireDoubleClick = settings.RequireDoubleClick;
         _pauseWhileFullscreenAppActive = settings.PauseWhileFullscreenAppActive;
+        _peekOnTaskbarClick = settings.PeekOnTaskbarClick;
         _restoreHiddenWindowsOnAppOpen = settings.RestoreHiddenWindowsOnAppOpen;
-        DesktopDetector.PeekOnTaskbarClick = settings.PeekOnTaskbarClick;
+        DesktopDetector.PeekOnTaskbarClick = _peekOnTaskbarClick;
         AppDiagnostics.Log("DesktopPeek created");
         _mouseHook.DesktopClicked += OnDesktopClicked;
+        _mouseHook.TaskbarClicked += OnTaskbarClicked;
         _mouseHook.DesktopIconClicked += OnDesktopIconClicked;
         _mouseHook.NonDesktopClicked += OnNonDesktopClicked;
         _focusWatcher.FocusChanged += OnFocusChanged;
@@ -67,6 +70,7 @@ public sealed class DesktopPeek : IDisposable
 
     public void SetPeekOnTaskbarClick(bool enabled)
     {
+        _peekOnTaskbarClick = enabled;
         DesktopDetector.PeekOnTaskbarClick = enabled;
         AppDiagnostics.Log($"PeekOnTaskbarClick set to {enabled}");
     }
@@ -150,15 +154,37 @@ public sealed class DesktopPeek : IDisposable
 
     private void OnDesktopClicked(object? sender, EventArgs e)
     {
+        if (_peekOnTaskbarClick)
+        {
+            AppDiagnostics.Log("Desktop click ignored because taskbar-only trigger mode is enabled");
+            return;
+        }
+
+        HandlePeekTrigger("Desktop click");
+    }
+
+    private void OnTaskbarClicked(object? sender, EventArgs e)
+    {
+        if (!_peekOnTaskbarClick)
+        {
+            AppDiagnostics.Log("Taskbar click ignored because taskbar trigger mode is disabled");
+            return;
+        }
+
+        HandlePeekTrigger("Taskbar click");
+    }
+
+    private void HandlePeekTrigger(string triggerSource)
+    {
         if (!IsEnabled || _isTransitioning)
         {
-            AppDiagnostics.Log($"Desktop click ignored. Enabled={IsEnabled} IsPeeking={_isPeeking} Transitioning={_isTransitioning}");
+            AppDiagnostics.Log($"{triggerSource} ignored. Enabled={IsEnabled} IsPeeking={_isPeeking} Transitioning={_isTransitioning}");
             return;
         }
 
         if (_isSuppressedForGaming)
         {
-            AppDiagnostics.Log($"Desktop click ignored because gaming protection is active ({_gameSuppressionReason})");
+            AppDiagnostics.Log($"{triggerSource} ignored because gaming protection is active ({_gameSuppressionReason})");
             return;
         }
 
@@ -166,16 +192,16 @@ public sealed class DesktopPeek : IDisposable
         {
             if (Environment.TickCount64 < _ignoreRestoreClickUntil)
             {
-                AppDiagnostics.Log("Desktop click ignored because it immediately followed activation");
+                AppDiagnostics.Log($"{triggerSource} ignored because it immediately followed activation");
                 return;
             }
 
-            AppDiagnostics.Log("Desktop clicked again while peeking; restoring windows");
+            AppDiagnostics.Log($"{triggerSource} repeated while peeking; restoring windows");
             RestoreWindows();
             return;
         }
 
-        AppDiagnostics.Log("Desktop click accepted; entering peek mode");
+        AppDiagnostics.Log($"{triggerSource} accepted; entering peek mode");
         PeekDesktopNow();
     }
 

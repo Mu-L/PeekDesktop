@@ -39,6 +39,11 @@ public sealed class MouseHook : IDisposable
     public event EventHandler? DesktopClicked;
 
     /// <summary>
+    /// Raised (on the UI thread) when a left-click on empty taskbar area is detected.
+    /// </summary>
+    public event EventHandler? TaskbarClicked;
+
+    /// <summary>
     /// Raised (on the UI thread) when a left-click lands on a desktop icon.
     /// </summary>
     public event EventHandler? DesktopIconClicked;
@@ -187,6 +192,10 @@ public sealed class MouseHook : IDisposable
         {
             case DesktopClickTarget.DesktopBackground:
                 DesktopClicked?.Invoke(this, EventArgs.Empty);
+                break;
+
+            case DesktopClickTarget.TaskbarBackground:
+                TaskbarClicked?.Invoke(this, EventArgs.Empty);
                 break;
 
             case DesktopClickTarget.DesktopIcon:

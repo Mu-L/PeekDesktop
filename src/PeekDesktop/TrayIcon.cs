@@ -66,7 +66,7 @@ internal sealed class TrayIcon : IDisposable
     private void TryAddTrayIcon(bool scheduleRetryOnFailure)
     {
         IntPtr hIcon = Win32Icon.CreateTrayIcon();
-        if (_trayIcon.Add(hIcon, "PeekDesktop \u2014 click desktop to peek"))
+        if (_trayIcon.Add(hIcon, GetTrayTooltip()))
             return;
 
         if (!scheduleRetryOnFailure)
@@ -103,7 +103,7 @@ internal sealed class TrayIcon : IDisposable
         menu.AddItem(ID_ENABLED, "Enabled", ToggleEnabled, _settings.Enabled);
         menu.AddItem(ID_STARTUP, "Start with Windows", ToggleStartup, _settings.StartWithWindows);
         menu.AddItem(ID_DOUBLECLICK, "Require Double-Click", ToggleDoubleClick, _settings.RequireDoubleClick);
-        menu.AddItem(ID_TASKBAR_CLICK, "Peek on Taskbar Click", ToggleTaskbarClick, _settings.PeekOnTaskbarClick);
+        menu.AddItem(ID_TASKBAR_CLICK, "Use Taskbar Click Instead of Desktop", ToggleTaskbarClick, _settings.PeekOnTaskbarClick);
         menu.AddItem(ID_RESTORE_ON_APP_OPEN, "Restore All Windows on App Switch", ToggleRestoreOnAppOpen, _settings.RestoreHiddenWindowsOnAppOpen);
         menu.AddItem(ID_GAME_GUARD, "Pause While Gaming / Full-Screen", ToggleGameGuard, _settings.PauseWhileFullscreenAppActive);
         menu.AddSeparator();
@@ -157,6 +157,7 @@ internal sealed class TrayIcon : IDisposable
     {
         _settings.PeekOnTaskbarClick = !_settings.PeekOnTaskbarClick;
         _desktopPeek.SetPeekOnTaskbarClick(_settings.PeekOnTaskbarClick);
+        _trayIcon.UpdateTooltip(GetTrayTooltip());
         _settings.Save();
     }
 
@@ -171,7 +172,7 @@ internal sealed class TrayIcon : IDisposable
     {
         _settings.PeekMode = peekMode;
         _desktopPeek.SetPeekMode(peekMode);
-        _trayIcon.UpdateTooltip($"PeekDesktop - {GetPeekModeDisplayName(peekMode)}");
+        _trayIcon.UpdateTooltip(GetTrayTooltip());
         _settings.Save();
     }
 
@@ -181,7 +182,8 @@ internal sealed class TrayIcon : IDisposable
         NativeMethods.MessageBoxW(
             IntPtr.Zero,
             $"PeekDesktop v{version}\n\n" +
-            "Click your desktop wallpaper to peek at your desktop,\n" +
+            "Click your desktop wallpaper, or switch to taskbar mode,\n" +
+            "to peek at your desktop,\n" +
             "just like macOS Sonoma.\n\n" +
             "Click any window or the taskbar to restore.\n" +
             "Peek Style lets you switch between Explorer show desktop\n" +
@@ -240,6 +242,12 @@ internal sealed class TrayIcon : IDisposable
             PeekMode.NativeShowDesktop => "Native Show Desktop",
             _ => "Peek"
         };
+    }
+
+    private string GetTrayTooltip()
+    {
+        string trigger = _settings.PeekOnTaskbarClick ? "taskbar" : "desktop";
+        return $"PeekDesktop - {GetPeekModeDisplayName(_settings.PeekMode)} - click {trigger} to peek";
     }
 
     public void Dispose()

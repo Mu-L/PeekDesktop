@@ -1,8 +1,8 @@
 # PeekDesktop 👀
 
-**Click empty desktop wallpaper (or empty taskbar area) to reveal your desktop — just like macOS Sonoma.**
+**Click empty desktop wallpaper to reveal your desktop — or switch the trigger to empty taskbar space — just like macOS Sonoma.**
 
-PeekDesktop brings macOS Sonoma's "click wallpaper to reveal desktop" feature to Windows 10 and 11. By default it uses Explorer's native **Show Desktop** behavior, and it also includes an optional **Fly Away** experimental style plus tray toggles for **Require Double-Click** and **Peek on Taskbar Click**. Click or drag desktop icons normally without accidentally triggering peek. When you're done, click any window, the taskbar, or the wallpaper again and everything comes right back where it was.
+PeekDesktop brings macOS Sonoma's "click wallpaper to reveal desktop" feature to Windows 10 and 11. By default it uses Explorer's native **Show Desktop** behavior, and it also includes an optional **Fly Away** experimental style plus tray toggles for **Require Double-Click** and **Use Taskbar Click Instead of Desktop**. Click or drag desktop icons normally without accidentally triggering peek. When you're done, click any window, the taskbar, or the wallpaper again and everything comes right back where it was.
 
 <p align="center">
   <img src="img/demo.gif" alt="PeekDesktop demo showing windows minimizing when you click the wallpaper" width="900" />
@@ -26,7 +26,7 @@ No installer needed. Download the zip, extract it, and run `PeekDesktop.exe`. Re
 
 ## How It Works
 
-1. **Click empty desktop wallpaper or empty taskbar area** (not an icon or taskbar button) -> your desktop is revealed
+1. **Click empty desktop wallpaper** — or switch the trigger to **empty taskbar area** — (not an icon or taskbar button) -> your desktop is revealed
 2. **Stay on the desktop** -> click or drag icons, right-click, and rearrange things while windows stay hidden
 3. **Click any app, the taskbar, or empty wallpaper again** -> all windows restore to exactly where they were
 
@@ -61,7 +61,7 @@ Right-click the tray icon for options:
 - 🔁 **Start with Windows** — launch automatically at login
 - 🖱️ **Require Double-Click** — optionally require a double-click on the desktop to trigger peek
 - 🎮 **Pause While Gaming / Full-Screen** — on by default for exclusive full-screen and known gaming fullscreen apps
-- 📌 **Peek on Taskbar Click** — optionally trigger peek from empty taskbar space
+- 📌 **Use Taskbar Click Instead of Desktop** — switch peek activation from empty desktop wallpaper to empty taskbar space
 - 🪟 **Restore All Windows on App Switch** — on by default; in Explorer show desktop mode, taskbar/Alt+Tab app switches restore all hidden windows behind the selected app
 - 👀 **Peek Style** — switch between Explorer and fly-away modes
 - ℹ️ **About** — version info
@@ -74,7 +74,7 @@ When Windows is in dark mode, the tray menu also follows the system theme when s
 ## What's New
 
 - **Small Native AOT single-file builds** for both x64 and ARM64
-- **Peek on Taskbar Click** — optional trigger from empty taskbar space
+- **Taskbar-only activation option** — switch peek activation from empty desktop wallpaper to empty taskbar space
 - **Dark tray menu support** — follows Windows dark mode when available
 - **Taskbar button Show Desktop** — bypasses keyboard remappers (PowerToys Keyboard Manager, etc.)
 - **Pause While Gaming / Full-Screen** — avoids interference during gaming sessions

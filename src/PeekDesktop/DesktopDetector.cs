@@ -6,6 +6,7 @@ internal enum DesktopClickTarget
 {
     NonDesktop,
     DesktopBackground,
+    TaskbarBackground,
     DesktopIcon
 }
 
@@ -29,7 +30,7 @@ public static class DesktopDetector
         if (PeekOnTaskbarClick && IsTaskbarBlankAreaWindow(hwnd, point))
         {
             AppDiagnostics.Log("Taskbar blank-area click detected");
-            return DesktopClickTarget.DesktopBackground;
+            return DesktopClickTarget.TaskbarBackground;
         }
 
         if (PeekOnTaskbarClick && IsMonitorTaskbarAreaPoint(point))
@@ -38,7 +39,7 @@ public static class DesktopDetector
             if (ClassifyTaskbarOverlayPoint(point))
             {
                 AppDiagnostics.Log("Taskbar blank-area click detected");
-                return DesktopClickTarget.DesktopBackground;
+                return DesktopClickTarget.TaskbarBackground;
             }
         }
 
