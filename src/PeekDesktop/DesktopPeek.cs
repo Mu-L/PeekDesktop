@@ -241,6 +241,12 @@ public sealed class DesktopPeek : IDisposable
             return;
         }
 
+        if (!_restoreHiddenWindowsOnAppOpen)
+        {
+            AppDiagnostics.Log("Non-desktop click detected while peeking; staying in peek mode because restore-on-app-switch is disabled");
+            return;
+        }
+
         AppDiagnostics.Log("Non-desktop click detected while peeking; restoring windows");
         RestoreWindows();
     }
@@ -307,6 +313,12 @@ public sealed class DesktopPeek : IDisposable
                 _activePeekMode = PeekMode;
             }
 
+            return;
+        }
+
+        if (!_restoreHiddenWindowsOnAppOpen)
+        {
+            AppDiagnostics.Log("Foreground moved away from desktop while peeking; staying in peek mode because restore-on-app-switch is disabled");
             return;
         }
 
